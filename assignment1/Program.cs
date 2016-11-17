@@ -22,13 +22,10 @@ namespace assignment1
         static void Main(string[] args)
         {
             //Set a constant for the size of the collection
-            const int wineItemCollectionSize = 4000;
+            BeverageDHattenEntities beverages = new BeverageDHattenEntities();
 
             //Create an instance of the UserInterface class
             UserInterface userInterface = new UserInterface();
-
-            //Create an instance of the WineItemCollection class
-            IWineCollection wineItemCollection = new WineItemCollection(wineItemCollectionSize);
 
             //Display the Welcome Message to the user
             userInterface.DisplayWelcomeGreeting();
@@ -37,55 +34,36 @@ namespace assignment1
             //This is the 'primer' run of displaying and getting.
             int choice = userInterface.DisplayMenuAndGetResponse();
 
-            while (choice != 5)
+            while (choice != 6)
             {
                 switch (choice)
                 {
                     case 1:
-                        //Load the CSV File
+                        //Print Entire List Of Items
+                        foreach (Beverage beverage in beverages.Beverages)
+                        {
+                            Console.WriteLine(beverage.id.PadRight(7) + beverage.price.ToString("C").PadRight(8) + beverage.name.Trim().PadRight(49) + beverage.pack.Trim().PadLeft(15));
+                        }
                         break;
 
                     case 2:
-                        //Print Entire List Of Items
-                        string[] allItems = wineItemCollection.GetPrintStringsForAllItems();
-                        if (allItems.Length > 0)
-                        {
-                            //Display all of the items
-                            userInterface.DisplayAllItems(allItems);
-                        }
-                        else
-                        {
-                            //Display error message for all items
-                            userInterface.DisplayAllItemsError();
-                        }
+                        //Search For An Item
+
                         break;
 
                     case 3:
-                        //Search For An Item
-                        string searchQuery = userInterface.GetSearchQuery();
-                        string itemInformation = wineItemCollection.FindById(searchQuery);
-                        if (itemInformation != null)
-                        {
-                            userInterface.DisplayItemFound(itemInformation);
-                        }
-                        else
-                        {
-                            userInterface.DisplayItemFoundError();
-                        }
-                        break;
-
-                    case 4:
                         //Add A New Item To The List
                         string[] newItemInformation = userInterface.GetNewItemInformation();
-                        if (wineItemCollection.FindById(newItemInformation[0]) == null)
-                        {
-                            wineItemCollection.AddNewItem(newItemInformation[0], newItemInformation[1], newItemInformation[2]);
-                            userInterface.DisplayAddWineItemSuccess();
-                        }
-                        else
-                        {
-                            userInterface.DisplayItemAlreadyExistsError();
-                        }
+
+                        break;
+                    case 4:
+                        //Update an existing item
+
+                        break;
+
+                    case 5:
+                        //Delete an existing item
+
                         break;
                 }
 
