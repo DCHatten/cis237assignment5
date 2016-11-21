@@ -114,13 +114,6 @@ namespace assignment1
             }
         }
 
-        //Display All Items Error
-        public void DisplayAllItemsError()
-        {
-            Console.WriteLine();
-            Console.WriteLine("There are no items in the list to print");
-        }
-
         //Display Item Found Success
         public void DisplayItemFound(List<Beverage> itemInformation)
         {
