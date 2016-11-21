@@ -26,6 +26,17 @@ namespace assignment1.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=barnesbrothers.homeserver.com,443;Initial Catalog=Beverage;Persist Se" +
+            "curity Info=True;User ID=dhatten;Password=password")]
+        public string BeverageConnectionString {
+            get {
+                return ((string)(this["BeverageConnectionString"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
         [global::System.Configuration.DefaultSettingValueAttribute("Data Source=barnesbrothers.homeserver.com,443;Initial Catalog=BeverageDHatten;Per" +
             "sist Security Info=True;User ID=dhatten;Password=password")]
         public string BeverageDHattenConnectionString {
