@@ -11,7 +11,7 @@ namespace assignment1
 {
     class UserInterface
     {
-        const int maxMenuChoice = 5;
+        const int maxMenuChoice = 6;
         //---------------------------------------------------
         //Public Methods
         //---------------------------------------------------
@@ -73,31 +73,44 @@ namespace assignment1
             Console.WriteLine("What is the new items Pack?");
             Console.Write("> ");
             string pack = Console.ReadLine();
-
-            return new string[] { id, description, pack };
+            Console.WriteLine("What is the new items Price?");
+            Console.Write("> ");
+            string price = Console.ReadLine();
+            Console.WriteLine("Is the new item active?");
+            Console.Write("Y or N");
+            string active = IsActive();
+            return new string[] { id, description, pack, price, active };
         }
 
-        //Display Import Success
-        public void DisplayImportSuccess()
+        private string IsActive()
         {
-            Console.WriteLine();
-            Console.WriteLine("Wine List Has Been Imported Successfully");
-        }
-
-        //Display Import Error
-        public void DisplayImportError()
-        {
-            Console.WriteLine();
-            Console.WriteLine("There was an error importing the CSV");
+            Console.WriteLine("Is the new item active?");
+            Console.Write("Y or N");
+            string input = Console.ReadLine().ToLower();
+            string active = "";
+            switch (input)
+            {
+                case "y":
+                    active = "true";
+                    break;
+                case "n":
+                    active = "false";
+                    break;
+                default:
+                    Console.WriteLine("That is not a valid selection, please enter Y or N");
+                    IsActive();
+                    break;
+            }
+            return active;
         }
 
         //Display All Items
-        public void DisplayAllItems(string[] allItemsOutput)
+        public void DisplayAllItems(BeverageDHattenEntities beverageEntities)
         {
-            Console.WriteLine();
-            foreach (string itemOutput in allItemsOutput)
+            foreach (Beverage beverage in beverageEntities.Beverages)
             {
-                Console.WriteLine(itemOutput);
+                Console.WriteLine(beverage.id.PadRight(7) + beverage.price.ToString("C").PadRight(8)
+                    + beverage.name.Trim().PadRight(49) + beverage.pack.Trim().PadLeft(15));
             }
         }
 
@@ -109,11 +122,15 @@ namespace assignment1
         }
 
         //Display Item Found Success
-        public void DisplayItemFound(string itemInformation)
+        public void DisplayItemFound(List<Beverage> itemInformation)
         {
             Console.WriteLine();
             Console.WriteLine("Item Found!");
-            Console.WriteLine(itemInformation);
+            foreach (Beverage beverage in itemInformation)
+            {
+                Console.WriteLine(beverage.id.PadRight(7) + beverage.price.ToString("C").PadRight(8)
+                    + beverage.name.Trim().PadRight(49) + beverage.pack.Trim().PadLeft(15));
+            }
         }
 
         //Display Item Found Error

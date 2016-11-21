@@ -1,14 +1,7 @@
-﻿//Author: David Barnes
+﻿//Author: David Hatten
 //CIS 237
-//Assignment 1
-/*
- * The Menu Choices Displayed By The UI
- * 1. Load Wine List From CSV
- * 2. Print The Entire List Of Items
- * 3. Search For An Item
- * 4. Add New Item To The List
- * 5. Exit Program
- */
+//Assignment 5
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +15,7 @@ namespace assignment1
         static void Main(string[] args)
         {
             //Set a constant for the size of the collection
-            BeverageDHattenEntities beverages = new BeverageDHattenEntities();
+            BeverageDHattenEntities beverageEntities = new BeverageDHattenEntities();
 
             //Create an instance of the UserInterface class
             UserInterface userInterface = new UserInterface();
@@ -40,21 +33,28 @@ namespace assignment1
                 {
                     case 1:
                         //Print Entire List Of Items
-                        foreach (Beverage beverage in beverages.Beverages)
-                        {
-                            Console.WriteLine(beverage.id.PadRight(7) + beverage.price.ToString("C").PadRight(8) + beverage.name.Trim().PadRight(49) + beverage.pack.Trim().PadLeft(15));
-                        }
+                        userInterface.DisplayAllItems(beverageEntities);
                         break;
 
                     case 2:
                         //Search For An Item
-
+                        string query = userInterface.GetSearchQuery();
+                        var queryResultsVar = beverageEntities.Beverages.Where(beverage => beverage.id.Trim().Contains(query));
+                        List<Beverage> queryResults = queryResultsVar.ToList();
+                        if (queryResults != null)
+                        {
+                            userInterface.DisplayItemFound(queryResults);
+                        }
+                        else
+                        {
+                            userInterface.DisplayItemFoundError();
+                        }
                         break;
 
                     case 3:
                         //Add A New Item To The List
                         string[] newItemInformation = userInterface.GetNewItemInformation();
-
+                        
                         break;
                     case 4:
                         //Update an existing item
