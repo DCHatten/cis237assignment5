@@ -53,24 +53,34 @@ namespace assignment1
 
                     case 3:
                         //Add A New Item To The List
-                        string[] newItemInformation = userInterface.GetNewItemInformation();
-                        
+                        Beverage newBeverage = userInterface.GetNewItemInformation();
+                        try
+                        {
+                            beverageEntities.Beverages.Add(newBeverage);
+                            beverageEntities.SaveChangesAsync();
+                        }
+                        catch(Exception e)
+                        {
+                            beverageEntities.Beverages.Remove(newBeverage);
+                            Console.WriteLine("Can't add the record - invalid information");
+                        }
                         break;
                     case 4:
                         //Update an existing item
-
+                        userInterface.UpdateItem();
                         break;
 
                     case 5:
                         //Delete an existing item
-
+                        userInterface.DeleteItem();
                         break;
                 }
 
                 //Get the new choice of what to do from the user
                 choice = userInterface.DisplayMenuAndGetResponse();
             }
-
         }
+
+
     }
 }

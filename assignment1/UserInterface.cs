@@ -12,6 +12,8 @@ namespace assignment1
     class UserInterface
     {
         const int maxMenuChoice = 6;
+        BeverageDHattenEntities beverageEntities = new BeverageDHattenEntities();
+
         //---------------------------------------------------
         //Public Methods
         //---------------------------------------------------
@@ -61,40 +63,67 @@ namespace assignment1
         }
 
         //Get New Item Information From The User.
-        public string[] GetNewItemInformation()
+        public Beverage GetNewItemInformation()
         {
             Console.WriteLine();
-            Console.WriteLine("What is the new items Id?");
-            Console.Write("> ");
-            string id = Console.ReadLine();
+            string id = ID();
             Console.WriteLine("What is the new items Description?");
             Console.Write("> ");
             string description = Console.ReadLine();
             Console.WriteLine("What is the new items Pack?");
             Console.Write("> ");
             string pack = Console.ReadLine();
-            Console.WriteLine("What is the new items Price?");
-            Console.Write("> ");
-            string price = Console.ReadLine();
-            Console.WriteLine("Is the new item active?");
-            Console.Write("Y or N");
-            string active = IsActive();
-            return new string[] { id, description, pack, price, active };
+            decimal priceToReturn = parsePrice();            
+            bool active = IsActive();
+            Beverage beverageToReturn = new Beverage();
+            beverageToReturn.id = id;
+            beverageToReturn.name = description;
+            beverageToReturn.pack = pack;
+            beverageToReturn.price = priceToReturn;
+            beverageToReturn.active = active;
+            return beverageToReturn;
         }
-
-        private string IsActive()
+        /// <summary>
+        /// This method prompts the user for an id for a new product then makes sure this id does not already
+        /// exist in the database before returning it.
+        /// </summary>
+        /// <returns></returns>
+        private string ID()
         {
-            Console.WriteLine("Is the new item active?");
-            Console.Write("Y or N");
+            string id = "";
+            Console.WriteLine("What is the new items Id?");
+            Console.Write("> ");
+            id = Console.ReadLine();
+            var idSearch = beverageEntities.Beverages.Where(beverage => beverage.id.Trim().Contains(id));
+            List<Beverage> searchResults = idSearch.ToList();
+            if (searchResults.Count == 0)
+            {
+                return id;
+            }
+            else
+            {
+                Console.WriteLine("Error, beverage with that ID already exists");
+                ID();
+                return id;
+            }
+        }
+        //Set the IsActive flag
+        private bool IsActive()
+        {
+            //Prompt the user to know if the beverage is active
+            Console.WriteLine("Is the beverage active?");
+            Console.WriteLine("Y or N");
+            //Read the user input
             string input = Console.ReadLine().ToLower();
-            string active = "";
+            bool active = false; 
+            //Parse the input
             switch (input)
             {
                 case "y":
-                    active = "true";
+                    active = true;
                     break;
                 case "n":
-                    active = "false";
+                    active = false;
                     break;
                 default:
                     Console.WriteLine("That is not a valid selection, please enter Y or N");
@@ -133,25 +162,113 @@ namespace assignment1
             Console.WriteLine("A Match was not found");
         }
 
-        //Display Add Wine Item Success
-        public void DisplayAddWineItemSuccess()
+        public void UpdateItem()
         {
             Console.WriteLine();
-            Console.WriteLine("The Item was successfully added");
+            Console.WriteLine("Enter the ID of the entry you'd like to edit");
+            string id = Console.ReadLine();
+            var queryResultsVar = beverageEntities.Beverages.Where(beverage => beverage.id.Trim().Contains(id));
+            List<Beverage> queryResults = queryResultsVar.ToList();
+            if (queryResults.Count == 1)
+            {
+                foreach(Beverage beverage in queryResults)
+                {
+                    Console.WriteLine(beverage.id.PadRight(7) + beverage.price.ToString("C").PadRight(8)
+                                    + beverage.name.Trim().PadRight(49) + beverage.pack.Trim().PadLeft(15));
+                }
+                Beverage updatedBeverage = updateItem(queryResults.First());
+                try
+                {
+                    beverageEntities.Beverages.Add(updatedBeverage);
+                    beverageEntities.SaveChangesAsync();
+                }
+                catch (Exception e)
+                {
+                    beverageEntities.Beverages.Remove(updatedBeverage);
+                    Console.WriteLine("Can't add the record - invalid information");
+                }
+            }
+            else if(queryResults.Count < 1)
+            {
+                Console.WriteLine("Error, no item with that ID found");
+                UpdateItem();
+            }
+            else if(queryResults.Count > 1)
+            {
+                Console.WriteLine("Error, multiple items found, please narrow search results");
+                UpdateItem();
+            }
         }
 
-        //Display Item Already Exists Error
-        public void DisplayItemAlreadyExistsError()
+        public void DeleteItem()
         {
             Console.WriteLine();
-            Console.WriteLine("An Item With That Id Already Exists");
+            Console.WriteLine("Enter the ID of the beverage you'd like to remove");
+            string id = Console.ReadLine();
+            var queryResultsVar = beverageEntities.Beverages.Where(beverage => beverage.id.Trim().Contains(id));
+            List<Beverage> queryResults = queryResultsVar.ToList();
+            Beverage beverageToRemove = queryResults.First();
+            if (queryResults.Count == 1)
+            {
+                Console.WriteLine("You have selected the following item to remove:");
+                foreach (Beverage beverage in queryResults)
+                {
+                    Console.WriteLine(beverage.id.PadRight(7) + beverage.price.ToString("C").PadRight(8)
+                                    + beverage.name.Trim().PadRight(49) + beverage.pack.Trim().PadLeft(15));
+                }
+                Console.WriteLine("Are you sure you want to remove this item?");
+                Console.WriteLine("Y or N");
+                string confirm = Console.ReadLine();
+                switch (confirm.ToLower())
+                {
+                    case "y":
+                        try
+                        {
+                            beverageEntities.Beverages.Remove(beverageToRemove);
+                            beverageEntities.SaveChanges();
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.ToString());
+                        }
+                        break;
+                    case "n":
+                        break;
+                    default:
+                        Console.WriteLine("That is not a valid selection, please enter Y or N");
+                        IsActive();
+                        break;
+                }
+            }
+            else if (queryResults.Count < 1)
+            {
+                Console.WriteLine("Error, no item with that ID found");
+                UpdateItem();
+            }
+            else if (queryResults.Count > 1)
+            {
+                Console.WriteLine("Error, multiple items found, please narrow search results");
+                UpdateItem();
+            }
         }
-
 
         //---------------------------------------------------
         //Private Methods
         //---------------------------------------------------
 
+        private Beverage updateItem(Beverage beverage)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Enter a new Name for the item");
+            Console.Write("> ");
+            beverage.name = Console.ReadLine();
+            Console.WriteLine("Enter a new Pack for the item");
+            Console.Write("> ");
+            beverage.pack = Console.ReadLine();
+            beverage.price = parsePrice();
+            beverage.active = IsActive();
+            return beverage;
+        }
         //Display the Menu
         private void displayMenu()
         {
@@ -213,6 +330,28 @@ namespace assignment1
 
             //Return the reutrnValue
             return returnValue;
+        }
+        /// <summary>
+        /// This method displays the prompt for a price for the beverage to add
+        /// and then parses it to a decimal to return
+        /// </summary>
+        /// <returns></returns>
+        private decimal parsePrice()
+        {
+            Console.WriteLine("What is the Price?");
+            Console.Write("> ");
+            string priceString = Console.ReadLine();
+            decimal price = 0m;
+            try
+            {
+                price = decimal.Parse(priceString);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error, you must enter a valid price in USD");
+                parsePrice();
+            }
+            return price;
         }
     }
 }
