@@ -11,7 +11,10 @@ namespace assignment1
 {
     class UserInterface
     {
+        //Constant for the maximum menu choice for the user
         const int maxMenuChoice = 6;
+
+        //Create an instance of the Beverage Entities model of the database
         BeverageDHattenEntities beverageEntities = new BeverageDHattenEntities();
 
         //---------------------------------------------------
@@ -162,6 +165,11 @@ namespace assignment1
             Console.WriteLine("A Match was not found");
         }
 
+        /// <summary>
+        /// This method takes the id of the entry the user would like to update, verifies the entry exists,
+        /// prints it to the screen, then calls the updateItem method to set the new values the user specifies,
+        /// and saves the changes.
+        /// </summary>
         public void UpdateItem()
         {
             Console.WriteLine();
@@ -200,6 +208,10 @@ namespace assignment1
             }
         }
 
+        /// <summary>
+        /// This method takes in the id of the record the user would like to delete, verfies that the
+        /// id is a valid key for the database, then removes the entry
+        /// </summary>
         public void DeleteItem()
         {
             Console.WriteLine();
@@ -256,6 +268,11 @@ namespace assignment1
         //Private Methods
         //---------------------------------------------------
 
+        /// <summary>
+        /// This method takes arguments for the new item name, pack, price, and whether or not it is active
+        /// </summary>
+        /// <param name="beverage"></param>
+        /// <returns></returns>
         private Beverage updateItem(Beverage beverage)
         {
             Console.WriteLine();
@@ -269,6 +286,7 @@ namespace assignment1
             beverage.active = IsActive();
             return beverage;
         }
+
         //Display the Menu
         private void displayMenu()
         {
@@ -331,6 +349,7 @@ namespace assignment1
             //Return the reutrnValue
             return returnValue;
         }
+
         /// <summary>
         /// This method displays the prompt for a price for the beverage to add
         /// and then parses it to a decimal to return

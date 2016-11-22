@@ -14,7 +14,7 @@ namespace assignment1
     {
         static void Main(string[] args)
         {
-            //Set a constant for the size of the collection
+            //Create an instance of the Beverage Entities model of the database
             BeverageDHattenEntities beverageEntities = new BeverageDHattenEntities();
 
             //Create an instance of the UserInterface class
@@ -80,7 +80,5 @@ namespace assignment1
                 choice = userInterface.DisplayMenuAndGetResponse();
             }
         }
-
-
     }
 }
